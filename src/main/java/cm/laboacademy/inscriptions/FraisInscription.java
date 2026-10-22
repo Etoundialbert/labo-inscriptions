@@ -1,5 +1,7 @@
 package cm.laboacademy.inscriptions;
 
+import java.time.LocalDate;
+
 /**
  * Calcule les frais d'inscription d'un étudiant (en FCFA).
  *
@@ -7,7 +9,8 @@ package cm.laboacademy.inscriptions;
  *  - L1, L2, L3 : 50 000 FCFA ;
  *  - M1, M2     : 75 000 FCFA ;
  *  - un boursier paie la moitié ;
- *  - tout autre niveau lève une IllegalArgumentException.
+ *  - tout autre niveau lève une IllegalArgumentException ;
+ *  - 10 % de réduction si l'inscription a lieu au plus tard à la date limite.
  */
 public class FraisInscription {
 
@@ -24,5 +27,17 @@ public class FraisInscription {
             default -> throw new IllegalArgumentException("Niveau inconnu : " + niveau);
         };
         return boursier ? base / 2 : base;
+    }
+
+    /**
+     * Variante avec réduction de 10 % pour une inscription anticipée
+     * (dateInscription <= dateLimite). Le résultat est un entier en FCFA.
+     */
+    public int calculer(String niveau, boolean boursier, LocalDate dateInscription, LocalDate dateLimite) {
+        if (dateInscription == null || dateLimite == null) {
+            throw new IllegalArgumentException("Les dates d'inscription et limite sont obligatoires");
+        }
+        int montant = calculer(niveau, boursier);
+        return dateInscription.isAfter(dateLimite) ? montant : montant * 90 / 100;
     }
 }
